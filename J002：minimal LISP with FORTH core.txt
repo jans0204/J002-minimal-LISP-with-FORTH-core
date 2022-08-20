@@ -1,0 +1,64 @@
+﻿J002：minimal LISP with FORTH core
+
+1. 下載原始碼：
+   #
+   # Interpreter for a minimal LISP-like language (in 1k lines of C)
+   #
+   https://github.com/robertostling/lisp1k     # lisp1k-master.zip
+
+2. 下載標頭檔：
+   #
+   # stdarg.h
+   # 
+   https://sites.uclouvain.be/SystInfo/usr/include/stdarg.h
+
+3. 製作空標頭檔：
+   打開 notepad (記事本)，不用輸入內容，就另存新檔：alloca.h, error.h
+
+4. 編寫補釘碼：
+   //
+   // error.c
+   //
+
+   #include <error.h>
+   #include <stdarg.h>
+   #include <stdio.h>
+
+   void error (int status, int errnum, const char *fmt, ...)
+   {
+       va_list ap;
+
+       va_start(ap, fmt);
+       fprintf(stderr, fmt, ap);
+       fputc('\n', stderr);
+       va_end(ap);
+       exit(status);
+   }
+
+5. 編寫編譯碼：
+   ::
+   :: mk-exe.bat
+   ::
+   if exist lisp1k.log del lisp1k.log
+   if exist lisp1k.exe del lisp1k.exe
+
+   gcc -I. -o lisp1k.exe lisp.c error.c > lisp1k.log 2>&1
+
+6. 抽取 lisp1k-master.zip\lisp1k-master\*.* 至工作目錄，例如：R:\src\  (RAMDRIVE)
+
+7. 將 stdarg.h, alloca.h, error.h, error.c, mk-exe.bat 五檔案加入 R:\src\
+
+8. 在 R:\src\ 開啟 Console Cmd (命令提示字元)，執行 mk-exe.bat 開始編譯，產生 lisp1k.exe
+
+9. 測試：
+
+   R:\src>lisp1k.exe < test.lsp
+
+   "Please have some factorials."
+   (1 2 6 24 120 720 5040 40320 362880 3628800 39916800 479001600 6227020800)
+
+   R:\src>
+
+10. 編譯環境：gcc 3.4.5 (2004) (mingw-vista special r3)
+
+   用 postfix 的 FORTH core 來製作 prefix 的 LISP interpreter，兩者的同質性，更顯現製作的簡潔。
